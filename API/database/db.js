@@ -5,10 +5,13 @@ require('dotenv').config();
  * @constant
  */
 const mysql = require('mysql2');
+/*
 process.env.DB_HOST = 'mysql.metropolia.fi';
 process.env.DB_USER = 'paulivu';
 process.env.DB_PASS = 'sqlpw12345';
 process.env.DB_NAME = 'paulivu';
+
+ */
 /**
  * sql yhteyden asetukset
  * @constant

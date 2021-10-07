@@ -4,6 +4,7 @@ const passport = require('passport');
 const {validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const userModel = require('../model/userModel');
+const secrets = require("../config/secrets");
 
 const login = (req, res) => {
     passport.authenticate('local', {session: false}, (error, user, info) => {
@@ -18,7 +19,7 @@ const login = (req, res) => {
             if (error) {
                 res.send(error);
             }
-            const token = jwt.sign(user, 'ryhma3');
+            const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "60s"});
             return res.json({user, token});
         });
 
