@@ -14,15 +14,34 @@ const promisePool = pool.promise();
  * Palauttaa käyttäjätilin luomisen onnistumisesta tai Errorin käyttäjätunnuksen luomisen epäonnistumisesta
  */
 const createUser = async (params) => {
+    const user = params.username
+    const email = params.userEmail
+    const password = params.password
     try {
         const sql = 'INSERT INTO users (Name, Email, Password) VALUES (?, ?, ?)';
-        const [rows] = await promisePool.execute(sql, params);
+        const [rows] = await promisePool.execute(sql, [user, email, password]);
         return rows;
     } catch (error) {
         console.log("Error creating user: + ", error.message);
-        return {error: "Error creating user in userModel"};
+        return {error: "Error creating user in userModel", id: 1};
     }
 };
+
+//TODO uuden funktion kommentointi sekä palautusarvojen täsemnnys
+const checkUser = async (params) =>{
+    try {
+        const sqlQuery='SELECT * FROM users WHERE Name = ? OR Email = ?';
+        const [rows] = await promisePool.execute(sqlQuery, params)
+        if (rows.length===0) {
+            return rows.length
+        } else {
+            return rows.length
+        }
+    } catch (error) {
+        console.log(error.message)
+        return ("error")
+    }
+}
 
 /** Hakee tietokannasta tiedot käyttäjän sähköpostin perusteella
  * @async
@@ -64,5 +83,5 @@ const findUser = async (id) => {
  * @type {{findUser: findUser, createUser: createUser, UserLogin: UserLogin}}
  */
 module.exports = {
-    createUser, UserLogin, findUser
+    createUser, UserLogin, findUser, checkUser
 };
