@@ -1,0 +1,11 @@
+.featured-items {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.featured-items-item {
+    width: 33%;
+    text-align: center;
+}
