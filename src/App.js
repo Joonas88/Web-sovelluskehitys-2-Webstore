@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
+import Product from './components/Product';
 
 //TODO: category vaihtaa parametriksi filterin mukaan
 
@@ -82,12 +83,12 @@ function App() {
             <Router>
                 <div>
                     <Link style={navBarStyle} to="/">Home</Link>
-                    <Link style={navBarStyle} to="/category">All</Link>
-                    <Link style={navBarStyle} to="/category">GPU</Link>
-                    <Link style={navBarStyle} to="/category">CPU</Link>
-                    <Link style={navBarStyle} to="/category">RAM</Link>
-                    <Link style={navBarStyle} to="/category">Motherboards</Link>
-                    <Link style={navBarStyle} to="/category">Other</Link>
+                    <Link style={navBarStyle} to="/category/All">All</Link>
+                    <Link style={navBarStyle} to="/category/GPU">GPU</Link>
+                    <Link style={navBarStyle} to="/category/CPU">CPU</Link>
+                    <Link style={navBarStyle} to="/category/RAM">RAM</Link>
+                    <Link style={navBarStyle} to="/category/Motherboards">Motherboards</Link>
+                    <Link style={navBarStyle} to="/category/Other">Other</Link>
                     <Link style={navBarStyle} to="/cart">Cart</Link>
                     <Button style={navBarStyle} variant="primary" onClick={handleShow}>Login</Button>
                     <Button style={navBarStyle} variant="primary" onClick={handleShowRegister}>Register</Button>
@@ -149,13 +150,16 @@ function App() {
                     </Modal.Footer>
                 </Modal>
                 <Switch>
-                    <Route path="/cart">
+                    <Route path ="/product/:id" component={Product}>
+
+                    </Route>
+                    <Route path="/cart" component={Cart}>
                         <Cart />
                     </Route>
-                    <Route path="/category">
+                    <Route path="/category/:id" component={FilterView}>
                         <FilterView />
                     </Route>
-                    <Route path="/">
+                    <Route path="/" component={Home}>
                         <Home />
                     </Route>
                 </Switch>
