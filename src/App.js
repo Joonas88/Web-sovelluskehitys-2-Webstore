@@ -23,6 +23,8 @@ function App() {
     const [userEmail, setUserEmail] = useState();
     const [userPw, setUserPw] = useState();
 
+    const [showLogged, setShowLogged] = useState()
+
     const handleClose = () => {
         setShow(false);
         setShowRegister(false)
@@ -72,14 +74,50 @@ function App() {
         axios
             .post('http://localhost:8081/auth/login', loginData)
             .then(response=>{
-                console.log(response)
+                //console.log(response.data)
+                localStorage.setItem('token', JSON.stringify(response.data.token))
+                localStorage.setItem('user', JSON.stringify(response.data.user.Name))
                 //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
+                //manageShowLoggedUser()
+                auth()
             })
+    }
+
+    const auth = () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        console.log(token)
+        axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
+            .then(response => {
+                console.log(response.data)
+                if(response.data==="Error"){
+                    //Todo Modal tai vastavaa esiin, että tarvitsee kirjautua uudelleen sisälle
+                    setShowLogged('')
+                } else {
+                    setShowLogged(response.data)
+                }
+
+            })
+    }
+
+    //TODO Tarkastele tarivtseeko muuta tehdä logoutin eteen
+    const logout = () => {
+        axios.get('http://localhost:8081/auth/logout').then(response=>{
+            localStorage.clear();
+            console.log(response)
+        })
+    }
+
+    //TODO käytetään joko tätä asettamaan kirjautunut käyttäjä tai sitten suoraan tuota auth() funktiota
+    const manageShowLoggedUser = () =>{
+
+        setShowLogged(localStorage.getItem('user'))
+
     }
 
     return (
         <div className="App">
         <h1>Webstore</h1>
+            <h2>{showLogged}</h2>
             <Router>
                 <div>
                     <Link style={navBarStyle} to="/">Home</Link>
@@ -92,7 +130,8 @@ function App() {
                     <Link style={navBarStyle} to="/cart">Cart</Link>
                     <Button style={navBarStyle} variant="primary" onClick={handleShow}>Login</Button>
                     <Button style={navBarStyle} variant="primary" onClick={handleShowRegister}>Register</Button>
-
+                    <Button style={navBarStyle} variant="primary" onClick={auth}>Auth</Button>
+                    <Button style={navBarStyle} variant="primary" onClick={logout}>Logout</Button>
                 </div>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header>

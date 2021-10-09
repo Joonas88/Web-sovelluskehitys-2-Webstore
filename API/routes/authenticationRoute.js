@@ -17,4 +17,6 @@ router.post('/register',
     authController.user_create_post
 );
 
+router.get('/auth',[], authController.authHeader)
+
 module.exports = router;
