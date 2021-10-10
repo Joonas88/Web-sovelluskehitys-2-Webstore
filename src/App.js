@@ -121,11 +121,11 @@ function App() {
             <Router>
                 <div>
                     <Link style={navBarStyle} to="/">Home</Link>
-                    <Link style={navBarStyle} to="/category/All">All</Link>
+                    <Link style={navBarStyle} to="/category/All" >All</Link>
                     <Link style={navBarStyle} to="/category/GPU">GPU</Link>
                     <Link style={navBarStyle} to="/category/CPU">CPU</Link>
                     <Link style={navBarStyle} to="/category/RAM">RAM</Link>
-                    <Link style={navBarStyle} to="/category/Motherboards">Motherboards</Link>
+                    <Link style={navBarStyle} to="/category/MOBO">Motherboards</Link>
                     <Link style={navBarStyle} to="/category/Other">Other</Link>
                     <Link style={navBarStyle} to="/cart">Cart</Link>
                     <Button style={navBarStyle} variant="primary" onClick={handleShow}>Login</Button>
@@ -195,9 +195,8 @@ function App() {
                     <Route path="/cart" component={Cart}>
                         <Cart />
                     </Route>
-                    <Route path="/category/:id" component={FilterView}>
-                        <FilterView />
-                    </Route>
+                    <Route path="/category/:id" component={(props) => <FilterView {...props} key={window.location.pathname}/>}/>
+
                     <Route path="/" component={Home}>
                         <Home />
                     </Route>
