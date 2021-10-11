@@ -193,7 +193,7 @@ function App() {
 
                     </Route>
                     <Route path="/cart" component={Cart}>
-                        <Cart />
+                        
                     </Route>
                     <Route path="/category/:id" component={(props) => <FilterView {...props} key={window.location.pathname}/>}/>
 

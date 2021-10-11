@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './Components.css';
+import {addToCart} from '../store'
 
 const Product = (props) => {
     //console.log(props.match.params.id)
@@ -11,11 +12,10 @@ const Product = (props) => {
             console.log(response.data);
             setProducts(response.data);
         })
-
     }, [])
 
     const handleAddToCart = (event) => {
-        console.log('lisää koriin');
+        addToCart(props.match.params.id);
     }
 
     return(
