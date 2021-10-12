@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {getCartItems, removeFromCart} from '../store';
+import {removeFromCart} from '../store';
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -8,7 +8,6 @@ import {Col, Row} from "react-bootstrap";
 
 const Cart = () => {
     const cartItems = JSON.parse(sessionStorage.getItem('cart'));
-    //const cartItems = getCartItems();
     const [value, setValue] = useState();
     const [shippingOption, setShippingOption] = useState([20]);
 
@@ -87,7 +86,7 @@ const Cart = () => {
                             <p className="total-section__item__label">Shipping</p>
                             <label>
                                 <select onChange={handleShippingSelect}>
-                                    <option disabled value="">Please select an option</option>
+                                    <option selected={true} disabled="disabled" value="">Please select an option</option>
                                     <option value="20">One day</option>
                                     <option value="15">Two day</option>
                                     <option value="10">Three to five day</option>

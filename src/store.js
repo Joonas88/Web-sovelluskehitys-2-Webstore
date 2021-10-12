@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const cartItems = [];
+let cartItems = [];
 const subtotal = 0;
 
 function addToCart(props) {
@@ -9,20 +9,25 @@ function addToCart(props) {
         //console.log(response.data);
         const item = response.data[0];
         if(item.Stock > 0) {
-            cartItems.push(item);
-            sessionStorage.setItem('cart', JSON.stringify(cartItems))
+            const temp = JSON.parse(sessionStorage.getItem('cart'));
+            temp.push(item);
+            sessionStorage.setItem('cart', JSON.stringify(temp));
+            cartItems = JSON.parse(sessionStorage.getItem('cart'));
         } else {
-            alert("Cant add to cart! Out of stock!")
+            alert("Cant add to cart! Out of stock!");
         }
     })
 }
+//Ei tarvetta?
 function getCartItems() {
     return cartItems;
 }
 
 function removeFromCart(id) {
-    cartItems.splice(id, 1)
-    sessionStorage.setItem('cart', JSON.stringify(cartItems))
+    const temp = JSON.parse(sessionStorage.getItem('cart'));
+    temp.splice(id, 1);
+    sessionStorage.setItem('cart', JSON.stringify(temp));
+    cartItems = JSON.parse(sessionStorage.getItem('cart'));
 }
 
 
