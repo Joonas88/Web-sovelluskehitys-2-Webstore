@@ -18,6 +18,7 @@ function App() {
     };
     const [show, setShow] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false)
 
     const [userName, setUserName]  = useState();
     const [userEmail, setUserEmail] = useState();
@@ -25,9 +26,14 @@ function App() {
 
     const [showLogged, setShowLogged] = useState()
 
+    const [showLogoutButton, setShowLogoutButton] = useState(true)
+    const [showLogRegButton, setShowLogRegButton] = useState(false)
+
+
     const handleClose = () => {
         setShow(false);
         setShowRegister(false)
+        setShowWelcome(false)
     }
     const handleShow = () => setShow(true);
     const handleShowRegister = () => setShowRegister(true);
@@ -57,7 +63,26 @@ function App() {
             .post('http://localhost:8081/auth/register', registerData)
             .then(response=>{
                 console.log(response)
-                //TODO Kaikki mitä rekiströitymisdatalla tehdään, mm suoraan sisäänkirjaus?
+                if (response.status===200) {
+                    const loginData={
+                        username: userEmail,
+                        password: userPw
+                    }
+                    axios
+                        .post('http://localhost:8081/auth/login', loginData)
+                        .then(response=>{
+                            //console.log(response.data)
+                            localStorage.setItem('token', JSON.stringify(response.data.token))
+                            localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                            //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
+                            //manageShowLoggedUser()
+                            auth()
+                            setShowLogRegButton(true)
+                            setShowLogoutButton(false)
+                        })
+                } else {
+                    alert("Registering failed!")
+                }
             })
 
     }
@@ -69,7 +94,7 @@ function App() {
             username: userEmail,
             password: userPw
         }
-        console.log(loginData)
+        //console.log(loginData)
 
         axios
             .post('http://localhost:8081/auth/login', loginData)
@@ -80,6 +105,8 @@ function App() {
                 //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
                 //manageShowLoggedUser()
                 auth()
+                setShowLogRegButton(true)
+                setShowLogoutButton(false)
             })
     }
 
@@ -93,6 +120,7 @@ function App() {
                     //Todo Modal tai vastavaa esiin, että tarvitsee kirjautua uudelleen sisälle
                     setShowLogged('')
                 } else {
+                    setShowWelcome(true)
                     setShowLogged(response.data)
                 }
 
@@ -104,6 +132,9 @@ function App() {
         axios.get('http://localhost:8081/auth/logout').then(response=>{
             localStorage.clear();
             console.log(response)
+            auth()
+            setShowLogRegButton(false)
+            setShowLogoutButton(true)
         })
     }
 
@@ -128,11 +159,25 @@ function App() {
                     <Link style={navBarStyle} to="/category/MOBO">Motherboards</Link>
                     <Link style={navBarStyle} to="/category/Other">Other</Link>
                     <Link style={navBarStyle} to="/cart">Cart</Link>
-                    <Button style={navBarStyle} variant="primary" onClick={handleShow}>Login</Button>
-                    <Button style={navBarStyle} variant="primary" onClick={handleShowRegister}>Register</Button>
-                    <Button style={navBarStyle} variant="primary" onClick={auth}>Auth</Button>
-                    <Button style={navBarStyle} variant="primary" onClick={logout}>Logout</Button>
                 </div>
+                <div id="Buttons">
+                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShow}>Login</Button>
+                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShowRegister}>Register</Button>
+                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogoutButton} onClick={logout}>Logout</Button>
+                </div>
+                <Modal show={showWelcome} onHide={handleClose}>
+                    <Modal.Header>
+                        <Modal.Title>Welcome {showLogged}!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Please enjoy our Webstores content!</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header>
                         <Modal.Title>Login</Modal.Title>
@@ -193,7 +238,7 @@ function App() {
 
                     </Route>
                     <Route path="/cart" component={Cart}>
-                        
+
                     </Route>
                     <Route path="/category/:id" component={(props) => <FilterView {...props} key={window.location.pathname}/>}/>
 

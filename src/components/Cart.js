@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {getCartItems, removeFromCart} from '../store';
 
 const Cart = () => {
-    const cartItems = getCartItems();
+    const cartItems = JSON.parse(sessionStorage.getItem('cart'));
+    //const cartItems = getCartItems();
     const [value, setValue] = useState();
     const [shippingOption, setShippingOption] = useState([]);
 
@@ -22,6 +23,11 @@ const Cart = () => {
     const handleShippingSelect = (event) => {
         setShippingOption(event.target.value);
     }
+
+    /*
+    console.log("sessionStorage: ")
+    console.log(JSON.parse(sessionStorage.getItem('cart')))
+     */
 
     return(
         <div className="wrapper">

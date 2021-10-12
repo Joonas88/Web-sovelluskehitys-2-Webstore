@@ -83,9 +83,8 @@ const  authHeader = (req, res) => {
             console.log(err)
             res.send("Error")
         } else {
-            //TODO vaihtaa palautuksen muuksi kuin käyttäjän nimeksi, tai toimii sekin yhtälailla
             //console.log("JWT decoded user (decoded)"+JSON.stringify(user.Name))
-            res.status(200).send("JWT decoded user (decoded)"+JSON.stringify(user.Name))
+            res.status(200).send(JSON.stringify(user.Name))
         }
     })
 

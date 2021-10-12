@@ -10,6 +10,7 @@ function addToCart(props) {
         const item = response.data[0];
         if(item.Stock > 0) {
             cartItems.push(item);
+            sessionStorage.setItem('cart', JSON.stringify(cartItems))
         } else {
             alert("Cant add to cart! Out of stock!")
         }
@@ -21,6 +22,7 @@ function getCartItems() {
 
 function removeFromCart(id) {
     cartItems.splice(id, 1)
+    sessionStorage.setItem('cart', JSON.stringify(cartItems))
 }
 
 
