@@ -158,7 +158,7 @@ function App() {
                     <Link style={navBarStyle} to="/category/RAM">RAM</Link>
                     <Link style={navBarStyle} to="/category/MOBO">Motherboards</Link>
                     <Link style={navBarStyle} to="/category/Other">Other</Link>
-                    <Link style={navBarStyle} to="/cart">Cart</Link>
+                    <Link style={navBarStyle} onClick={auth} to="/cart">Cart</Link>
                 </div>
                 <div id="Buttons">
                     <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShow}>Login</Button>
