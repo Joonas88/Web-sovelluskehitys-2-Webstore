@@ -2,8 +2,10 @@ import axios from 'axios';
 
 let cartItems = [];
 const subtotal = 0;
-//TODO tämä ei toimi, kun tyhjentää session aina refreshin yhteydessä
-sessionStorage.setItem('cart', JSON.stringify(cartItems))
+if(sessionStorage.getItem('cart') === null) {
+    sessionStorage.setItem('cart', JSON.stringify(cartItems));
+}
+
 function addToCart(props) {
     const id = props;
     axios.get(`http://localhost:8081/products/${id}`).then(response => {
