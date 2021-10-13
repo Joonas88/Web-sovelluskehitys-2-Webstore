@@ -6,6 +6,7 @@ const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const bcrypt = require('bcryptjs');
+const secrets = require("../config/secrets");
 
 /** Luo kirjautumisen käyttäjä ja salasanan vaatien jonka lisäksi tarkastaa että syötetyt tiedot kelpaavat
  * @async
@@ -30,10 +31,10 @@ passport.use(new Strategy(
             return done(err);
         }
     }));
-
+//TODO Jos ei enää kirjautuminen toimi vaihda rivillä 37 secretOrKey: 'ryhma3'
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: 'ryhma3',
+        secretOrKey: secrets.jwtSecret,
     },
     async (jwtPayload, done) => {
         try {

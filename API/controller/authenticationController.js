@@ -15,7 +15,8 @@ const login = (req, res) => {
                 user: user,
             });
         }
-        const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "60s"});
+        //TODO jokin järkevä tokenin vanhenemisaika
+        const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "120s"});
         //localStorage.setItem('user', JSON.stringify(token));
         return res.json({user, token});
 

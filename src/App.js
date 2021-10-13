@@ -74,8 +74,7 @@ function App() {
                             //console.log(response.data)
                             localStorage.setItem('token', JSON.stringify(response.data.token))
                             localStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                            //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
-                            //manageShowLoggedUser()
+                            localStorage.setItem('email', JSON.stringify(response.data.user.Email))
                             auth()
                             setShowLogRegButton(true)
                             setShowLogoutButton(false)
@@ -100,8 +99,10 @@ function App() {
             .post('http://localhost:8081/auth/login', loginData)
             .then(response=>{
                 //console.log(response.data)
+                //TODO vaihda sessionStorageen?
                 localStorage.setItem('token', JSON.stringify(response.data.token))
                 localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                localStorage.setItem('email', JSON.stringify(response.data.user.Email))
                 //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
                 //manageShowLoggedUser()
                 auth()
@@ -112,10 +113,10 @@ function App() {
 
     const auth = () => {
         const token = JSON.parse(localStorage.getItem('token'))
-        console.log(token)
+        //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 if(response.data==="Error"){
                     //Todo Modal tai vastavaa esiin, että tarvitsee kirjautua uudelleen sisälle
                     setShowLogged('')
@@ -137,6 +138,8 @@ function App() {
             setShowLogoutButton(true)
         })
     }
+
+    //TODO Hävitä tervetulomodal tai keksi parempi ratkaisu
 
     //TODO käytetään joko tätä asettamaan kirjautunut käyttäjä tai sitten suoraan tuota auth() funktiota
     const manageShowLoggedUser = () =>{

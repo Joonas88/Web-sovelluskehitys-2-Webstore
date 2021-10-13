@@ -6,7 +6,7 @@ const {validationResult} = require('express-validator');
 const order_post = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log('Error while creating a new user: ', errors);
+        console.log('Error while creating a new order: ', errors);
         res.send(errors.array());
     } else {
         const params = [

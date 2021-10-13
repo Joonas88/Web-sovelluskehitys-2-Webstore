@@ -5,6 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
+import {checkNode} from "@testing-library/jest-dom/dist/utils";
 
 const Cart = () => {
     const cartItems = JSON.parse(sessionStorage.getItem('cart'));
@@ -21,6 +22,12 @@ const Cart = () => {
 
     const [showError, setShowError] = useState(false)
     const [showContact, setShowContact] = useState(false)
+    const [orderName, setOrderName] = useState()
+    const [orderAddress, setOrderAddress] = useState()
+    const [orderZip, setOrderZip] = useState()
+    const [orderCity, setOrderCity] = useState()
+    const [orderPhone, setOrderPhone] = useState()
+    const [orderEmail, setOrderEmail] = useState()
 
     //Päivittää ostoskorin
     const refresh = ()=>{
@@ -56,8 +63,61 @@ const Cart = () => {
         setShowContact(false)
     }
 
-    const sendOrder = () => {
+    const handleOrderName = (event) => {
+        setOrderName(event.target.value)
+    }
+
+    const handleOrderAddress = (event) => {
+        setOrderAddress(event.target.value)
+    }
+
+    const handleOrderZip = (event) => {
+        setOrderZip(event.target.value)
+    }
+
+    const handleOrderCity = (event) => {
+        setOrderCity(event.target.value)
+    }
+
+    const handleOrderPhone = (event) => {
+        setOrderPhone(event.target.value)
+    }
+
+    const handleOrderEmail = (event) => {
+        setOrderEmail(event.target.value)
+    }
+
+    const sendOrder = (event) => {
+        event.preventDefault()
         //TODO tietokantaan tilauksen tekeminen
+
+        let orders = []
+        for (let i=0; i<cartItems.length; i++){
+            console.log(cartItems[i].Product_id)
+            orders.push(cartItems[i].Name)
+        }
+
+        console.log(orders)
+        console.log(JSON.stringify(orders))
+       const order = {
+           name: orderName,
+           address: orderAddress,
+           zip: orderZip,
+           city: orderCity,
+           phone: orderPhone,
+           price: total,
+           email: orderEmail,
+           order: JSON.stringify(orders)
+        }
+        console.log(order)
+
+        axios.post('http://localhost:8081/order/submit', order)
+            .then(response =>{
+                console.log(response)
+            })
+
+
+
     }
 
     return(
@@ -159,29 +219,29 @@ const Cart = () => {
                     <Form onSubmit={sendOrder}>
                         <Form.Group>
                             <Form.Label>Recipients name</Form.Label>
-                            <Form.Control required="yes" type="text"/>
+                            <Form.Control required="yes" type="text" onChange={handleOrderName}/>
                         </Form.Group>
                             <Form.Group>
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control required="yes" type="text"/>
+                                <Form.Control required="yes" type="text" onChange={handleOrderAddress}/>
                             </Form.Group>
                         <Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Zip</Form.Label>
-                                <Form.Control required="yes" type="number"/>
+                                <Form.Control required="yes" type="number" onChange={handleOrderZip}/>
                             </Form.Group>
                             <Form.Group as={Col}>
                                 <Form.Label>City</Form.Label>
-                                <Form.Control required="yes" type="text"/>
+                                <Form.Control required="yes" type="text" onChange={handleOrderCity}/>
                             </Form.Group>
                         </Row>
                         <Form.Group>
                             <Form.Label>Mobile</Form.Label>
-                            <Form.Control required="yes" type="number"/>
+                            <Form.Control required="yes" type="number" onChange={handleOrderPhone}/>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
-                            <Form.Control required="yes" type="Email"/>
+                            <Form.Control required="yes" type="Email" onChange={handleOrderEmail}/>
                         </Form.Group>
                         <Form.Group>
                             <Form.Check required="yes" type="checkbox" label="I understand the terms of delivery and sevice" />
@@ -189,13 +249,13 @@ const Cart = () => {
                         <Button variant="primary" type="submit">
                             Place order
                         </Button>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Cancel
-                        </Button>
+
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
                 </Modal.Footer>
             </Modal>
             </div>
