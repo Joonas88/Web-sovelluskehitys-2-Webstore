@@ -11,6 +11,7 @@ import axios from "axios";
 import Product from './components/Product';
 import './App.css'
 import {Container, Nav, Navbar} from "react-bootstrap";
+import Slideshow from './components/Slideshow'
 
 //TODO: category vaihtaa parametriksi filterin mukaan
 
@@ -168,11 +169,9 @@ function App() {
                             <Button className="navbuttons1" style={navBarStyle} variant="secondary" hidden={showLogRegButton} onClick={handleShowRegister}>Register</Button>
                             <Button className="navbuttons1" style={navBarStyle} variant="secondary" hidden={showLogoutButton} onClick={logout}>Logout</Button>
                         </Nav>
-
                     </Container>
-
-
                 </Navbar>
+                <Slideshow component={Slideshow}/>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header>
                         <Modal.Title>Login</Modal.Title>
