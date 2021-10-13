@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 import axios from "axios";
 import Product from './components/Product';
+import './App.css'
+import {Container, Nav, Navbar} from "react-bootstrap";
 
 //TODO: category vaihtaa parametriksi filterin mukaan
 
@@ -114,12 +116,10 @@ function App() {
             .then(response => {
                 //console.log(response.data)
                 if(response.data==="Error"){
-                    //Todo Modal tai vastavaa esiin, että tarvitsee kirjautua uudelleen sisälle
                     setShowLogged('')
                 } else {
                     setShowLogged(response.data)
                 }
-
             })
     }
 
@@ -137,24 +137,42 @@ function App() {
 
     return (
         <div className="App">
-        <h1>Webstore</h1>
-            <h2>{showLogged}</h2>
+            <div id="logo">
+                <p className="glitch"><span aria-hidden="true">WEBSTORE</span>WEBSTORE<span
+                    aria-hidden="true">WEBSTORE</span></p>
+            </div>
             <Router>
-                <div>
-                    <Link style={navBarStyle} to="/">Home</Link>
-                    <Link style={navBarStyle} to="/category/All" >All</Link>
-                    <Link style={navBarStyle} to="/category/GPU">GPU</Link>
-                    <Link style={navBarStyle} to="/category/CPU">CPU</Link>
-                    <Link style={navBarStyle} to="/category/RAM">RAM</Link>
-                    <Link style={navBarStyle} to="/category/MOBO">Motherboards</Link>
-                    <Link style={navBarStyle} to="/category/Other">Other</Link>
-                    <Link style={navBarStyle} to="/cart">Cart</Link>
-                </div>
-                <div id="Buttons">
-                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShow}>Login</Button>
-                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShowRegister}>Register</Button>
-                    <Button style={navBarStyle} variant="outline-primary" hidden={showLogoutButton} onClick={logout}>Logout</Button>
-                </div>
+                <Navbar bg="dark" variant="dark" sticky="top">
+                    <Container>
+                        <Navbar.Brand href="/">WEBSTORE</Navbar.Brand>
+                        <Nav className="me-auto">
+                            <Nav.Link href="/">Home</Nav.Link>
+                            <Nav.Link href="/category/All" >All</Nav.Link>
+                            <Nav.Link href="/category/GPU" >GPU</Nav.Link>
+                            <Nav.Link href="/category/CPU" >CPU</Nav.Link>
+                            <Nav.Link href="/category/RAM" >RAM</Nav.Link>
+                            <Nav.Link href="/category/Motherboards" >Motherboards</Nav.Link>
+                            <Nav.Link href="/category/Other" >Other</Nav.Link>
+                            <Nav.Link href="/cart" >Cart</Nav.Link>
+                        </Nav>
+                        <Nav>
+                            <Navbar.Toggle />
+                            <Navbar.Collapse className="signed_user">
+                                <Navbar.Text  hidden={showLogoutButton} >
+                                    Signed in as: {showLogged+"  "}
+                                </Navbar.Text>
+                            </Navbar.Collapse>
+                        </Nav>
+                        <Nav>
+                            <Button className="navbuttons1" style={navBarStyle} variant="secondary" hidden={showLogRegButton} onClick={handleShow}>Login</Button>
+                            <Button className="navbuttons1" style={navBarStyle} variant="secondary" hidden={showLogRegButton} onClick={handleShowRegister}>Register</Button>
+                            <Button className="navbuttons1" style={navBarStyle} variant="secondary" hidden={showLogoutButton} onClick={logout}>Logout</Button>
+                        </Nav>
+
+                    </Container>
+
+
+                </Navbar>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header>
                         <Modal.Title>Login</Modal.Title>

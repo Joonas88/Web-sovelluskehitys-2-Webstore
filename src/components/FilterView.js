@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './Components.css';
 import {Link} from 'react-router-dom';
+import {Button, Nav} from "react-bootstrap";
+import {addToCart} from "../store";
 
 const FilterView = (props) => {
-    
+
     console.log(props.match.params.id)
     const [products, setProducts] = useState([]);
     const selectedCategory = props.match.params.id;
@@ -23,9 +25,15 @@ const FilterView = (props) => {
 
     }, [])
 
+
+    const handleAddToCart = (props) => {
+        console.log(props)
+        //addToCart()
+    }
+
     return(
-        <div>
-            <h1>{props.match.params.id}</h1>
+        <div className="wrapper">
+            <h1 className="otsikko">{props.match.params.id}</h1>
             <ul className="featured-items">
                 {products.map(product => (
                     <li key={product.Product_id} className="featured-items-item">
@@ -33,14 +41,17 @@ const FilterView = (props) => {
                             <img className="product-image" src={`/assets/images/products/${product.Image}`} alt=""/>
                         </Link>
                         <div>
-                            <Link to={"/product/" + product.Product_id} className="product-title">{product.Name}</Link>
+                            <Nav.Item variant="dark">
+                                <Nav.Link href={"/product/" + product.Product_id} className="product-title">{product.Name}</Nav.Link>
+                            </Nav.Item>
                         </div>
-                        <p><em>{product.Price} €</em></p>
+                        <p className="price"><em>{product.Price} €</em></p>
+                        <Button onClick={() => {addToCart(product.Product_id);}}>Add to Cart</Button>
                     </li>
                 ))}
             </ul>
         </div>
-        
+
     )
 }
 

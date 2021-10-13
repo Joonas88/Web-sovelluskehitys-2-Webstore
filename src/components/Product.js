@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './Components.css';
 import {addToCart} from '../store'
+import Button from "react-bootstrap/Button";
 
 const Product = (props) => {
     //console.log(props.match.params.id)
@@ -19,7 +20,7 @@ const Product = (props) => {
     }
 
     return(
-        <div>
+        <div className="wrapper">
             <h1>Product info</h1>
             <ul className="featured-items">
                 {products.map(product => (
@@ -29,7 +30,7 @@ const Product = (props) => {
                         </div>
                         <h4>{product.Name}</h4>
                         <p><em>{product.Price} €</em></p>
-                        <button onClick={handleAddToCart}>AddToCart</button>
+                        <Button onClick={handleAddToCart}>AddToCart</Button>
                         <p><em>{product.Stock} left in stock.</em></p>
                         <h4>Details</h4>
                         <ul className="list">

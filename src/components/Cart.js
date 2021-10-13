@@ -4,14 +4,15 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import {Col, Row} from "react-bootstrap";
-import {checkNode} from "@testing-library/jest-dom/dist/utils";
+import {Col, Container, Row} from "react-bootstrap";
 import {refreshPage} from "../App";
+
+//TODO Kommentoi koodi
 
 const Cart = () => {
     let cartItems = JSON.parse(sessionStorage.getItem('cart'));
     const [value, setValue] = useState();
-    const [shippingOption, setShippingOption] = useState([]);
+    const [shippingOption, setShippingOption] = useState([20]);
 
     const cartItemsCount = cartItems.length;
     const itemSubtotal = cartItems.reduce((itemSubtotal, item) => itemSubtotal = itemSubtotal + item.Price, 0);
@@ -52,11 +53,9 @@ const Cart = () => {
                 //console.log(response.data)
                 if(response.data==="Error"){
                     setShowError(true)
-                    //refreshPage()
                 } else {
                     setShowContact(true)
                 }
-
             })
     }
 
@@ -94,13 +93,13 @@ const Cart = () => {
     }
 
     const sendOrder = (event) => {
+
         event.preventDefault()
-        //TODO tietokantaan tilauksen tekeminen
 
         let orders = []
         for (let i=0; i<cartItems.length; i++){
-            console.log(cartItems[i].Product_id)
-            orders.push(cartItems[i].Name)
+            //console.log(cartItems[i].Product_id)
+            orders.push(cartItems[i].Product_id)
         }
 
         console.log(orders)
@@ -131,27 +130,27 @@ const Cart = () => {
                 }
             })
 
-
-
     }
 
     return(
         <div className="wrapper">
-            <h1>Ostoskori</h1>
+            <h1>Cart</h1>
             <div className="flex-col">
-                <ul className="cart-list">
-                    {cartItems.map((cartItem, index) => (
-                        <li key={index} className="cart-list__item">
-                            <img src={`/assets/images/products/${cartItem.Image}`} alt="" className="thumbnail"/>
-                            <div className="cart-list__item__details">
-                                <p>{cartItem.Name}</p>
-                                <p><em>{cartItem.Price} €</em></p>
-                                <button className={'btn'} onClick={() => {removeFromCart(index); refresh();}}>Remove</button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-                <div className="total-setion">
+                <Container className="cart-list">
+                    <Row>
+                        {cartItems.map((cartItem, index)=>(
+                            <Col className="cart-list__item" xs="4">
+                                <img src={`/assets/images/products/${cartItem.Image}`} alt="" className="thumbnail"/>
+                                <div className="cart-list__item__details">
+                                    <p>{cartItem.Name}</p>
+                                    <p><em>{cartItem.Price} €</em></p>
+                                    <Button className={'btn'} onClick={() => {removeFromCart(index); refresh();}}>Remove</Button>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </Container>
+                <div className="total-section">
                     <ul className="total-section-list">
                         <li className="total-section__item">
                             <p className="total-section__item__label">{cartItemsCount} Item(s)</p>
@@ -162,10 +161,10 @@ const Cart = () => {
                             <label>
                                 <select onChange={handleShippingSelect}>
                                     <option selected={true} disabled="disabled" value="">Please select an option</option>
-                                    <option value="20">One day</option>
-                                    <option value="15">Two day</option>
-                                    <option value="10">Three to five day</option>
-                                    <option value="5">One week or more</option>
+                                    <option value="20">One day 20€</option>
+                                    <option value="15">Two day 15€</option>
+                                    <option value="10">Three to five day 10€</option>
+                                    <option value="5">One week or more 5€</option>
                                 </select>
                             </label>
                         </li>
@@ -183,7 +182,7 @@ const Cart = () => {
                             <p className="total-section__item__label">Total</p>
                             <p>{total.toFixed(2)} €</p>
                         </li>
-                        <button className="total-section__checkout-button" onClick={auth}>Order</button>
+                        <Button disabled={cartItems.length===0} className="total-section__checkout-button" onClick={auth}>Order</Button>
                     </ul>
                 </div>
             </div>
@@ -234,32 +233,56 @@ const Cart = () => {
                     <Form onSubmit={sendOrder}>
                         <Form.Group>
                             <Form.Label>Recipients name</Form.Label>
-                            <Form.Control required="yes" type="text" onChange={handleOrderName}/>
+                            <Form.Control
+                                required
+                                type="text"
+                                onChange={handleOrderName}
+                            />
                         </Form.Group>
                             <Form.Group>
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control required="yes" type="text" onChange={handleOrderAddress}/>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    onChange={handleOrderAddress}
+                                />
                             </Form.Group>
                         <Row>
                             <Form.Group as={Col}>
                                 <Form.Label>Zip</Form.Label>
-                                <Form.Control required="yes" type="number" onChange={handleOrderZip}/>
+                                <Form.Control
+                                    required
+                                    type="number"
+                                    onChange={handleOrderZip}
+                                />
                             </Form.Group>
                             <Form.Group as={Col}>
                                 <Form.Label>City</Form.Label>
-                                <Form.Control required="yes" type="text" onChange={handleOrderCity}/>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    onChange={handleOrderCity}
+                                />
                             </Form.Group>
                         </Row>
                         <Form.Group>
                             <Form.Label>Mobile</Form.Label>
-                            <Form.Control required="yes" type="number" onChange={handleOrderPhone}/>
+                            <Form.Control
+                                required
+                                type="number"
+                                onChange={handleOrderPhone}
+                            />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
-                            <Form.Control required="yes" type="Email" onChange={handleOrderEmail}/>
+                            <Form.Control
+                                required
+                                type="Email"
+                                onChange={handleOrderEmail}
+                            />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Check required="yes" type="checkbox" label="I understand the terms of delivery and sevice" />
+                            <Form.Check required type="checkbox" label="I understand the terms of delivery and sevice" />
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             Place order

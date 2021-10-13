@@ -3,6 +3,8 @@ import axios from 'axios';
 import './Components.css';
 import {Link} from 'react-router-dom';
 import Product from './Product';
+import {addToCart} from "../store";
+import {Button, Nav} from "react-bootstrap";
 
 const Home = (props) => {
     const [products, setProducts] = useState([]);
@@ -16,9 +18,9 @@ const Home = (props) => {
     }, [])
 
     return(
-        
-        <div>
-            <h1>Featured Items</h1>
+
+        <div className="wrapper">
+            <h1 className="otsikko">Featured Items</h1>
             <ul className="featured-items">
                 {products.filter(product => product.Featured === 1).map(filteredProduct => (
                     <li key={filteredProduct.Product_id} className="featured-items-item">
@@ -26,9 +28,12 @@ const Home = (props) => {
                             <img className="product-image" src={`assets/images/products/${filteredProduct.Image}`} alt=""/>
                         </Link>
                         <div>
-                            <Link to={"/product/" + filteredProduct.Product_id} className="product-title">{filteredProduct.Name}</Link>
+                            <Nav.Item variant="dark">
+                                <Nav.Link href={"/product/" + filteredProduct.Product_id} className="product-title">{filteredProduct.Name}</Nav.Link>
+                            </Nav.Item>
                         </div>
-                        <p><em>{filteredProduct.Price} €</em></p>
+                        <p className="price"><em>{filteredProduct.Price} €</em></p>
+                        <Button onClick={() => {addToCart(filteredProduct.Product_id);}}>Add to Cart</Button>
                     </li>
                 ))}
             </ul>
