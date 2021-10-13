@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import Home from './components/Home';
 import Cart from './components/Cart';
@@ -11,12 +11,17 @@ import axios from "axios";
 import Product from './components/Product';
 import './App.css'
 import {Container, Nav, Navbar} from "react-bootstrap";
-import Slideshow from './components/Slideshow';
 import './components/Components.css'
 
 //TODO: category vaihtaa parametriksi filterin mukaan
 
 function App() {
+
+    useEffect(()=>{
+        auth()
+        handleCartCount()
+    })
+
     const navBarStyle = {
         margin: 2
     };
@@ -33,6 +38,13 @@ function App() {
     const [showLogoutButton, setShowLogoutButton] = useState(true)
     const [showLogRegButton, setShowLogRegButton] = useState(false)
 
+    const [showLoggedName, setShowLoggedName] = useState(true)
+
+    const [cartCount, setCartcount] = useState()
+
+    const handleCartCount = () => {
+        setCartcount(JSON.parse(sessionStorage.getItem('cart')).length)
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -60,12 +72,12 @@ function App() {
             email: userEmail,
             password: userPw
         }
-        console.log(registerData)
+        //console.log(registerData)
 
         axios
             .post('http://localhost:8081/auth/register', registerData)
             .then(response=>{
-                console.log(response)
+                //console.log(response)
                 if (response.status===200) {
                     const loginData={
                         username: userEmail,
@@ -75,9 +87,9 @@ function App() {
                         .post('http://localhost:8081/auth/login', loginData)
                         .then(response=>{
                             //console.log(response.data)
-                            sessionStorage.setItem('token', JSON.stringify(response.data.token))
-                            sessionStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                            sessionStorage.setItem('email', JSON.stringify(response.data.user.Email))
+                            localStorage.setItem('token', JSON.stringify(response.data.token))
+                            localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                            localStorage.setItem('email', JSON.stringify(response.data.user.Email))
                             auth()
                             setShowLogRegButton(true)
                             setShowLogoutButton(false)
@@ -102,9 +114,9 @@ function App() {
             .post('http://localhost:8081/auth/login', loginData)
             .then(response=>{
                 //console.log(response.data)
-                sessionStorage.setItem('token', JSON.stringify(response.data.token))
-                sessionStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                sessionStorage.setItem('email', JSON.stringify(response.data.user.Email))
+                localStorage.setItem('token', JSON.stringify(response.data.token))
+                localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                localStorage.setItem('email', JSON.stringify(response.data.user.Email))
                 auth()
                 setShowLogRegButton(true)
                 setShowLogoutButton(false)
@@ -112,31 +124,37 @@ function App() {
     }
 
     const auth = () => {
-        const token = JSON.parse(sessionStorage.getItem('token'))
+        const token = JSON.parse(localStorage.getItem('token'))
         //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
                 //console.log(response.data)
                 if(response.data==="Error"){
                     setShowLogged('')
+                    setShowLoggedName(true)
+                    setShowLogRegButton(false)
+                    setShowLogoutButton(true)
                 } else {
+                    setShowLogRegButton(true)
+                    setShowLogoutButton(false)
                     setShowLogged(response.data)
+                    setShowLoggedName(false)
                 }
             })
     }
 
     const logout = () => {
         axios.get('http://localhost:8081/auth/logout').then(response=>{
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('user');
-            sessionStorage.removeItem('email');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('email');
             console.log(response)
             auth()
             setShowLogRegButton(false)
             setShowLogoutButton(true)
+            setShowLoggedName(true)
         })
     }
-
 
     return (
         <div className="App">
@@ -147,23 +165,23 @@ function App() {
             <Router>
                 <Navbar bg="dark" variant="dark" sticky="top">
                     <Container>
-                        <Navbar.Brand href="/">WEBSTORE</Navbar.Brand>
+                        <Navbar.Brand onSelect={auth} as={Link} to="/">WEBSTORE</Navbar.Brand>
                         <Nav className="me-auto">
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/category/All" >All</Nav.Link>
-                            <Nav.Link href="/category/GPU" >GPU</Nav.Link>
-                            <Nav.Link href="/category/CPU" >CPU</Nav.Link>
-                            <Nav.Link href="/category/RAM" >RAM</Nav.Link>
-                            <Nav.Link href="/category/Motherboards" >Motherboards</Nav.Link>
-                            <Nav.Link href="/category/Other" >Other</Nav.Link>
-                            <Nav.Link href="/cart" >Cart</Nav.Link>
-                            <Navbar.Text > {JSON.parse(sessionStorage.getItem('cart')).length} </Navbar.Text>
+                            <Nav.Link onSelect={auth} as={Link} to="/">Home</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/All" >All</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/GPU" >GPU</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/CPU" >CPU</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/RAM" >RAM</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/Motherboards" >Motherboards</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/category/Other" >Other</Nav.Link>
+                            <Nav.Link onSelect={auth} as={Link} to="/cart" >Cart</Nav.Link>
+                            <Navbar.Text > {cartCount} </Navbar.Text>
                         </Nav>
                         <Nav>
                             <Navbar.Toggle />
                             <Navbar.Collapse className="signed_user">
-                                <Navbar.Text  hidden={showLogoutButton} >
-                                    Signed in as: {showLogged+"  "}
+                                <Navbar.Text  hidden={showLoggedName} >
+                                    Signed in as: {showLogged}
                                 </Navbar.Text>
                             </Navbar.Collapse>
                         </Nav>

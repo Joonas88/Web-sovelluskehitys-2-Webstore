@@ -46,7 +46,7 @@ const Cart = () => {
      */
 
     const auth = () => {
-        const token = JSON.parse(sessionStorage.getItem('token'))
+        const token = JSON.parse(localStorage.getItem('token'))
         //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
@@ -123,6 +123,7 @@ const Cart = () => {
                     setShowContact(false)
                     alert("Order placed succesfully!")
                     cartItems=[]
+                    console.log(cartItems.length)
                     sessionStorage.setItem('cart', JSON.stringify(cartItems));
                     refresh()
                 } else {

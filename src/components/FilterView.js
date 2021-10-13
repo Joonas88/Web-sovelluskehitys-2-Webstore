@@ -27,12 +27,6 @@ const FilterView = (props) => {
 
     }, [])
 
-
-    const handleAddToCart = (props) => {
-        console.log(props)
-        //addToCart()
-    }
-
     return(
         <div className="wrapper">
             <div>
