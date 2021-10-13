@@ -7,7 +7,7 @@ const order_post = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log('Error while creating a new order: ', errors);
-        res.send(errors.array());
+        res.status(400).send(errors.array());
     } else {
         const params = [
             req.body.name,
@@ -15,7 +15,9 @@ const order_post = async (req, res) => {
             req.body.email,
             req.body.order,
         ];
-        if (await orderModel.postOrder(params)) {
+        const response = await orderModel.postOrder(params)
+
+        if (response.affectedRows===1) {
             res.status(200).json({msg: "Successfully created a new order"});
         } else {
             res.status(400).json({error: 'Order creation error'});

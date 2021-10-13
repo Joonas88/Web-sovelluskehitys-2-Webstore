@@ -6,11 +6,12 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import {Col, Row} from "react-bootstrap";
 import {checkNode} from "@testing-library/jest-dom/dist/utils";
+import {refreshPage} from "../App";
 
 const Cart = () => {
-    const cartItems = JSON.parse(sessionStorage.getItem('cart'));
+    let cartItems = JSON.parse(sessionStorage.getItem('cart'));
     const [value, setValue] = useState();
-    const [shippingOption, setShippingOption] = useState([20]);
+    const [shippingOption, setShippingOption] = useState([]);
 
     const cartItemsCount = cartItems.length;
     const itemSubtotal = cartItems.reduce((itemSubtotal, item) => itemSubtotal = itemSubtotal + item.Price, 0);
@@ -44,13 +45,14 @@ const Cart = () => {
      */
 
     const auth = () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        console.log(token)
+        const token = JSON.parse(sessionStorage.getItem('token'))
+        //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 if(response.data==="Error"){
                     setShowError(true)
+                    //refreshPage()
                 } else {
                     setShowContact(true)
                 }
@@ -58,8 +60,12 @@ const Cart = () => {
             })
     }
 
-    const handleClose = () => {
+    const handleRefresh = () => {
         setShowError(false)
+        refreshPage()
+    }
+
+    const handleClose = () => {
         setShowContact(false)
     }
 
@@ -113,7 +119,16 @@ const Cart = () => {
 
         axios.post('http://localhost:8081/order/submit', order)
             .then(response =>{
-                console.log(response)
+                console.log(response.status===400)
+                if(response.status!==400){
+                    setShowContact(false)
+                    alert("Order placed succesfully!")
+                    cartItems=[]
+                    sessionStorage.setItem('cart', JSON.stringify(cartItems));
+                    refresh()
+                } else {
+                    alert("Somethin went wrong!")
+                }
             })
 
 
@@ -172,7 +187,7 @@ const Cart = () => {
                     </ul>
                 </div>
             </div>
-            <Modal show={showError} onHide={handleClose}>
+            <Modal show={showError} onHide={handleRefresh}>
                 <Modal.Header>
                     <Modal.Title>Not logged in!</Modal.Title>
                 </Modal.Header>
@@ -180,7 +195,7 @@ const Cart = () => {
                     <p>Please login to proceed with the order</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleRefresh}>
                         Close
                     </Button>
                 </Modal.Footer>
@@ -249,7 +264,6 @@ const Cart = () => {
                         <Button variant="primary" type="submit">
                             Place order
                         </Button>
-
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

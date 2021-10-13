@@ -18,7 +18,7 @@ function App() {
     };
     const [show, setShow] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
-    const [showWelcome, setShowWelcome] = useState(false)
+
 
     const [userName, setUserName]  = useState();
     const [userEmail, setUserEmail] = useState();
@@ -33,7 +33,6 @@ function App() {
     const handleClose = () => {
         setShow(false);
         setShowRegister(false)
-        setShowWelcome(false)
     }
     const handleShow = () => setShow(true);
     const handleShowRegister = () => setShowRegister(true);
@@ -72,9 +71,9 @@ function App() {
                         .post('http://localhost:8081/auth/login', loginData)
                         .then(response=>{
                             //console.log(response.data)
-                            localStorage.setItem('token', JSON.stringify(response.data.token))
-                            localStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                            localStorage.setItem('email', JSON.stringify(response.data.user.Email))
+                            sessionStorage.setItem('token', JSON.stringify(response.data.token))
+                            sessionStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                            sessionStorage.setItem('email', JSON.stringify(response.data.user.Email))
                             auth()
                             setShowLogRegButton(true)
                             setShowLogoutButton(false)
@@ -99,12 +98,9 @@ function App() {
             .post('http://localhost:8081/auth/login', loginData)
             .then(response=>{
                 //console.log(response.data)
-                //TODO vaihda sessionStorageen?
-                localStorage.setItem('token', JSON.stringify(response.data.token))
-                localStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                localStorage.setItem('email', JSON.stringify(response.data.user.Email))
-                //TODO Kaikki mitä kirjautumisdatalla , mm tokenin tallettaminen ja kirjautumisen tallentaminen tokenin avulla
-                //manageShowLoggedUser()
+                sessionStorage.setItem('token', JSON.stringify(response.data.token))
+                sessionStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                sessionStorage.setItem('email', JSON.stringify(response.data.user.Email))
                 auth()
                 setShowLogRegButton(true)
                 setShowLogoutButton(false)
@@ -112,7 +108,7 @@ function App() {
     }
 
     const auth = () => {
-        const token = JSON.parse(localStorage.getItem('token'))
+        const token = JSON.parse(sessionStorage.getItem('token'))
         //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
@@ -121,31 +117,22 @@ function App() {
                     //Todo Modal tai vastavaa esiin, että tarvitsee kirjautua uudelleen sisälle
                     setShowLogged('')
                 } else {
-                    setShowWelcome(true)
                     setShowLogged(response.data)
                 }
 
             })
     }
 
-    //TODO Tarkastele tarivtseeko muuta tehdä logoutin eteen
     const logout = () => {
         axios.get('http://localhost:8081/auth/logout').then(response=>{
-            localStorage.clear();
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('email');
             console.log(response)
             auth()
             setShowLogRegButton(false)
             setShowLogoutButton(true)
         })
-    }
-
-    //TODO Hävitä tervetulomodal tai keksi parempi ratkaisu
-
-    //TODO käytetään joko tätä asettamaan kirjautunut käyttäjä tai sitten suoraan tuota auth() funktiota
-    const manageShowLoggedUser = () =>{
-
-        setShowLogged(localStorage.getItem('user'))
-
     }
 
     return (
@@ -161,26 +148,13 @@ function App() {
                     <Link style={navBarStyle} to="/category/RAM">RAM</Link>
                     <Link style={navBarStyle} to="/category/MOBO">Motherboards</Link>
                     <Link style={navBarStyle} to="/category/Other">Other</Link>
-                    <Link style={navBarStyle} onClick={auth} to="/cart">Cart</Link>
+                    <Link style={navBarStyle} to="/cart">Cart</Link>
                 </div>
                 <div id="Buttons">
                     <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShow}>Login</Button>
                     <Button style={navBarStyle} variant="outline-primary" hidden={showLogRegButton} onClick={handleShowRegister}>Register</Button>
                     <Button style={navBarStyle} variant="outline-primary" hidden={showLogoutButton} onClick={logout}>Logout</Button>
                 </div>
-                <Modal show={showWelcome} onHide={handleClose}>
-                    <Modal.Header>
-                        <Modal.Title>Welcome {showLogged}!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>Please enjoy our Webstores content!</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header>
                         <Modal.Title>Login</Modal.Title>
@@ -253,4 +227,10 @@ function App() {
         </div>
     );
 }
+
+function refreshPage() {
+    window.location.reload(false)
+}
+
 export default App;
+export {refreshPage}
