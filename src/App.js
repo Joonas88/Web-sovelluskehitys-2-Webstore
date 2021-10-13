@@ -12,6 +12,7 @@ import Product from './components/Product';
 import './App.css'
 import {Container, Nav, Navbar} from "react-bootstrap";
 import Slideshow from './components/Slideshow';
+import './components/Components.css'
 
 //TODO: category vaihtaa parametriksi filterin mukaan
 
@@ -136,6 +137,7 @@ function App() {
         })
     }
 
+
     return (
         <div className="App">
             <div id="logo">
@@ -155,6 +157,7 @@ function App() {
                             <Nav.Link href="/category/Motherboards" >Motherboards</Nav.Link>
                             <Nav.Link href="/category/Other" >Other</Nav.Link>
                             <Nav.Link href="/cart" >Cart</Nav.Link>
+                            <Navbar.Text > {JSON.parse(sessionStorage.getItem('cart')).length} </Navbar.Text>
                         </Nav>
                         <Nav>
                             <Navbar.Toggle />

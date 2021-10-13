@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 let cartItems = [];
-const subtotal = 0;
+
 if(sessionStorage.getItem('cart') === null) {
     sessionStorage.setItem('cart', JSON.stringify(cartItems));
 }
@@ -21,10 +21,6 @@ function addToCart(props) {
         }
     })
 }
-//Ei tarvetta?
-function getCartItems() {
-    return cartItems;
-}
 
 function removeFromCart(id) {
     const temp = JSON.parse(sessionStorage.getItem('cart'));
@@ -35,4 +31,4 @@ function removeFromCart(id) {
 
 
 
-export {addToCart, getCartItems, removeFromCart};
+export {addToCart, removeFromCart};
