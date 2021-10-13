@@ -13,6 +13,7 @@
 }
 .list {
     list-style: none;
+    align-items: center;
 }
 .cart-list {
 
@@ -55,6 +56,7 @@
     background: #ffffff;
     margin-bottom: 50px;
     margin-left: 50px;
+    margin-right: 50px;
 }
 
 .total-section-list {
@@ -93,7 +95,7 @@
     color: #fff;
     margin-top: 15px;
     margin-bottom: 30px;
-    font-size: xxx-large;
+    font-size: 40px;
 
 }
 
@@ -114,4 +116,14 @@
     font-size: 20px;
     background: #efefef;
     text-align: center;
+}
+.product-image {
+    margin-bottom: 10px;
+}
+.product-title {
+    color: #fff;
+}
+.details {
+    color: #fff;
+    padding-bottom: 1rem;
 }

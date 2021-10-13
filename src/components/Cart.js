@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import {Col, Container, Row} from "react-bootstrap";
 import {refreshPage} from "../App";
-
+import Slideshow from './Slideshow';
 //TODO Kommentoi koodi
 
 const Cart = () => {
@@ -134,7 +134,10 @@ const Cart = () => {
 
     return(
         <div className="wrapper">
-            <h1>Cart</h1>
+            <div>
+                <Slideshow component={Slideshow}/>
+            </div>
+            <h1 className="otsikko">Cart</h1>
             <div className="flex-col">
                 <Container className="cart-list">
                     <Row>

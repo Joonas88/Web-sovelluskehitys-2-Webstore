@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import Product from './Product';
 import {addToCart} from "../store";
 import {Button, Nav} from "react-bootstrap";
+import Slideshow from './Slideshow';
 
 const Home = (props) => {
     const [products, setProducts] = useState([]);
@@ -20,6 +21,9 @@ const Home = (props) => {
     return(
 
         <div className="wrapper">
+            <div>
+                <Slideshow component={Slideshow}/>
+            </div>
             <h1 className="otsikko">Featured Items</h1>
             <ul className="featured-items">
                 {products.filter(product => product.Featured === 1).map(filteredProduct => (

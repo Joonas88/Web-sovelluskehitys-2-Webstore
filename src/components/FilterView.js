@@ -4,6 +4,8 @@ import './Components.css';
 import {Link} from 'react-router-dom';
 import {Button, Nav} from "react-bootstrap";
 import {addToCart} from "../store";
+import Slideshow from './Slideshow';
+import 'react-slideshow-image/dist/styles.css';
 
 const FilterView = (props) => {
 
@@ -33,6 +35,9 @@ const FilterView = (props) => {
 
     return(
         <div className="wrapper">
+            <div>
+                <Slideshow component={Slideshow}/>
+            </div>
             <h1 className="otsikko">{props.match.params.id}</h1>
             <ul className="featured-items">
                 {products.map(product => (
