@@ -45,6 +45,8 @@ function App() {
     const [showLogRegButton, setShowLogRegButton] = useState(false)
     const [showLoggedName, setShowLoggedName] = useState(true)
     const [cartCount, setCartCount] = useState()
+    const [validateLogin, setValidateLogin] = useState()
+    const [validateRegister, setValidateRegister] = useState()
 
     /**
      * Alla olevilla metodeilla käsitellään erinäisten state-muuttujien arvon vaihdoksia
@@ -79,37 +81,42 @@ function App() {
      * @param event toimii suorana hakijana mahdollisetsi Bootsrtapin JXS
      */
     const handleRegister = (event) => {
-        handleClose()
+        const form = event.currentTarget
         event.preventDefault()
-        const registerData = {
-            username: userName,
-            email: userEmail,
-            password: userPw
-        }
+        if (form.checkValidity()===false) {
+            event.stopPropagation()
+        } else {
+            const registerData = {
+                username: userName,
+                email: userEmail,
+                password: userPw
+            }
 
-        axios
-            .post('http://localhost:8081/auth/register', registerData)
-            .then(response=>{
-                if (response.status===200) {
-                    const loginData={
-                        username: userEmail,
-                        password: userPw
+            axios
+                .post('http://localhost:8081/auth/register', registerData)
+                .then(response=>{
+                    if (response.status===200) {
+                        const loginData={
+                            username: userEmail,
+                            password: userPw
+                        }
+                        axios
+                            .post('http://localhost:8081/auth/login', loginData)
+                            .then(response=>{
+                                localStorage.setItem('token', JSON.stringify(response.data.token))
+                                localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                                localStorage.setItem('email', JSON.stringify(response.data.user.Email))
+                                auth()
+                                setShowLogRegButton(true)
+                                setShowLogoutButton(false)
+                            })
+                    } else {
+                        alert("Registering failed!")
                     }
-                    axios
-                        .post('http://localhost:8081/auth/login', loginData)
-                        .then(response=>{
-                            localStorage.setItem('token', JSON.stringify(response.data.token))
-                            localStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                            localStorage.setItem('email', JSON.stringify(response.data.user.Email))
-                            auth()
-                            setShowLogRegButton(true)
-                            setShowLogoutButton(false)
-                        })
-                } else {
-                    alert("Registering failed!")
-                }
-            })
-
+                })
+            handleClose()
+        }
+        setValidateRegister(true)
     }
 
     /**
@@ -118,24 +125,32 @@ function App() {
      * @param event
      */
     const handleLogin = (event) => {
-        handleClose()
+        const form = event.currentTarget
         event.preventDefault()
-        const loginData={
-            username: userEmail,
-            password: userPw
-        }
+        if (form.checkValidity()===false) {
+            event.stopPropagation()
+        } else {
 
-        axios
-            .post('http://localhost:8081/auth/login', loginData)
-            .then(response=>{
-                //console.log(response.data)
-                localStorage.setItem('token', JSON.stringify(response.data.token))
-                localStorage.setItem('user', JSON.stringify(response.data.user.Name))
-                localStorage.setItem('email', JSON.stringify(response.data.user.Email))
-                auth()
-                setShowLogRegButton(true)
-                setShowLogoutButton(false)
-            })
+            const loginData={
+                username: userEmail,
+                password: userPw
+            }
+
+            axios
+                .post('http://localhost:8081/auth/login', loginData)
+                .then(response=>{
+                    //console.log(response.data)
+                    localStorage.setItem('token', JSON.stringify(response.data.token))
+                    localStorage.setItem('user', JSON.stringify(response.data.user.Name))
+                    localStorage.setItem('email', JSON.stringify(response.data.user.Email))
+                    auth()
+                    setShowLogRegButton(true)
+                    setShowLogoutButton(false)
+                })
+            handleClose()
+        }
+        setValidateLogin(true)
+
     }
 
     /**
@@ -223,16 +238,18 @@ function App() {
                         <Modal.Title>Login</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form onSubmit={handleLogin}>
+                        <Form noValidate validated={validateLogin} onSubmit={handleLogin}>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" required  onChange={handleUserEmail}/>
+                                <Form.Control type="email" placeholder="Enter email" required onChange={handleUserEmail}/>
+                                <Form.Control.Feedback type="invalid">Please enter a valid email</Form.Control.Feedback>
                                 <Form.Text className="text-muted">
                                 </Form.Text>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" required onChange={handleUserPw}/>
+                                <Form.Control.Feedback type="invalid">Please enter a password containing one upper case letter and at least 8 characters</Form.Control.Feedback>
                             </Form.Group>
                             <Button variant="primary" type="submit">Login</Button>
                         </Form>
@@ -248,21 +265,24 @@ function App() {
                         Register
                     </Modal.Header>
                     <Modal.Body>
-                        <Form onSubmit={handleRegister}>
+                        <Form noValidate validated={validateRegister}  onSubmit={handleRegister}>
                             <Form.Group className="mb-3" controlId="formBasicText">
                                 <Form.Label>Username</Form.Label>
                                 <Form.Control type="text" placeholder="Enter username" required onChange={handleUserName}/>
-                                <Form.Text className="text-muted">Please select a pleasing username</Form.Text>
+                                <Form.Control.Feedback type="invalid">Username can't be that</Form.Control.Feedback>
+                                <Form.Control.Feedback type="valid">I LOVE THAT!</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder="Enter email" required onChange={handleUserEmail}/>
+                                <Form.Control.Feedback type="invalid">Please enter a valid email</Form.Control.Feedback>
                                 <Form.Text className="text-muted">
                                 </Form.Text>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" required onChange={handleUserPw}/>
+                                <Form.Control.Feedback type="invalid">Please enter a password containing one upper case letter and at least 8 characters</Form.Control.Feedback>
                             </Form.Group>
                             <Button variant="primary" type="submit">Register</Button>
                         </Form>

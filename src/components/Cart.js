@@ -10,7 +10,7 @@ import Slideshow from './Slideshow';
 
 const Cart = () => {
     let cartItems = JSON.parse(sessionStorage.getItem('cart'));
-    const [setValue] = useState();
+    const [value, setValue] = useState();
     const [shippingOption, setShippingOption] = useState([20]);
 
     /**
@@ -34,6 +34,7 @@ const Cart = () => {
     const [orderCity, setOrderCity] = useState();
     const [orderPhone, setOrderPhone] = useState();
     const [orderEmail, setOrderEmail] = useState();
+    const [validateCart, setValidateCart] = useState();
 
     /**
      * Päivittää ostoskorin
@@ -41,7 +42,7 @@ const Cart = () => {
     const refresh = ()=>{
         setValue({});
     }
-    
+
     /**
      * Käsittelee postitusvaihtoehdon muutoksen
      */
@@ -115,41 +116,43 @@ const Cart = () => {
      */
     const sendOrder = (event) => {
 
+        const form = event.currentTarget
         event.preventDefault()
+        if(form.checkValidity()===false) {
+            event.stopPropagation()
+        } else {
+            let orders = []
+            for (let i=0; i<cartItems.length; i++){
+                orders.push(cartItems[i].Product_id)
+            }
+            const order = {
+                name: orderName,
+                address: orderAddress,
+                zip: orderZip,
+                city: orderCity,
+                phone: orderPhone,
+                price: total,
+                email: orderEmail,
+                order: JSON.stringify(orders)
+            }
+            console.log(order)
 
-        let orders = []
-        for (let i=0; i<cartItems.length; i++){
-            //console.log(cartItems[i].Product_id)
-            orders.push(cartItems[i].Product_id)
+            axios.post('http://localhost:8081/order/submit', order)
+                .then(response =>{
+                    console.log(response.status===400)
+                    if(response.status!==400){
+                        setShowContact(false)
+                        alert("Order placed succesfully!")
+                        cartItems=[]
+                        console.log(cartItems.length)
+                        sessionStorage.setItem('cart', JSON.stringify(cartItems));
+                        refresh()
+                    } else {
+                        alert("Somethin went wrong!")
+                    }
+                })
         }
-        //console.log(orders)
-        //console.log(JSON.stringify(orders))
-       const order = {
-           name: orderName,
-           address: orderAddress,
-           zip: orderZip,
-           city: orderCity,
-           phone: orderPhone,
-           price: total,
-           email: orderEmail,
-           order: JSON.stringify(orders)
-        }
-        console.log(order)
-
-        axios.post('http://localhost:8081/order/submit', order)
-            .then(response =>{
-                console.log(response.status===400)
-                if(response.status!==400){
-                    setShowContact(false)
-                    alert("Order placed succesfully!")
-                    cartItems=[]
-                    console.log(cartItems.length)
-                    sessionStorage.setItem('cart', JSON.stringify(cartItems));
-                    refresh()
-                } else {
-                    alert("Somethin went wrong!")
-                }
-            })
+        setValidateCart(true)
     }
     /**
      * Ostoskori näkymä:
@@ -256,7 +259,7 @@ const Cart = () => {
                             <p>{total.toFixed(2)} €</p>
                         </li>
                     </ul>
-                    <Form onSubmit={sendOrder}>
+                    <Form noValidate validated={validateCart} onSubmit={sendOrder}>
                         <Form.Group>
                             <Form.Label>Recipients name</Form.Label>
                             <Form.Control
