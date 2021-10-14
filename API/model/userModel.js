@@ -27,7 +27,12 @@ const createUser = async (params) => {
     }
 };
 
-//TODO uuden funktion kommentointi sekä palautusarvojen täsemnnys
+/**
+ * React projektiin lisätty tietokannasta olemassaolevien käyttäjien tarkistaminen ettei voi lisätä tuplana tunnusta tai sähköpostia
+ * @async
+ * @param params username, email
+ * @returns {Promise<string|*>}
+ */
 const checkUser = async (params) =>{
     try {
         const sqlQuery='SELECT * FROM users WHERE Name = ? OR Email = ?';

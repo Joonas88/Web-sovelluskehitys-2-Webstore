@@ -22,7 +22,6 @@
 
 .cart-list__item {
     margin-bottom: 15px;
-    //border: 10px dotted red;
     border-bottom: 2px solid rgba(33, 37, 41, 1);
 }
 

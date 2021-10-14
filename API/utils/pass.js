@@ -31,7 +31,9 @@ passport.use(new Strategy(
             return done(err);
         }
     }));
-//TODO Jos ei enää kirjautuminen toimi vaihda rivillä 37 secretOrKey: 'ryhma3'
+/**
+ * Lisätty secretOrKey: käyttämään .env tiedoston salaisuutta
+ */
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: secrets.jwtSecret,
