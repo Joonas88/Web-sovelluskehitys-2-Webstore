@@ -3,6 +3,7 @@
 const pool = require('../database/db');
 const promisePool = pool.promise();
 
+//Jaktojalostuksessa lisätään tietokantaan kaikki käyttäjän syöttämät tiedot
 const postOrder = async (params) => {
     try {
         const sql = 'INSERT INTO orders (Name, Price, Email, products) VALUES (?, ?, ?, ?)';

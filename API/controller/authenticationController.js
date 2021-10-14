@@ -6,6 +6,11 @@ const bcrypt = require('bcryptjs');
 const userModel = require('../model/userModel');
 const secrets = require("../config/secrets");
 
+/**
+ * Lisätty tokenin vanhenemisaika React projekitn toteutukseen
+ * @param req pyyntö palvelimelle
+ * @param res palauttaa palvelimelta saadun datan
+ */
 const login = (req, res) => {
     passport.authenticate('local', {session: false}, (error, user, info) => {
         console.log('log in', info);
@@ -15,25 +20,18 @@ const login = (req, res) => {
                 user: user,
             });
         }
-        //TODO jokin järkevä tokenin vanhenemisaika
-        const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "1d"});
-        //localStorage.setItem('user', JSON.stringify(token));
+        const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "1h"});
         return res.json({user, token});
-
-        //TODO Selvitä voiko käyttää reactin kanssa?
-        /*
-        req.login(user, {session: false}, (error) => {
-            if (error) {
-                res.send(error);
-            }
-            const token = jwt.sign(user, secrets.jwtSecret, {expiresIn: "60s"});
-            return res.json({user, token});
-        });
-         */
-
     })(req, res);
 };
 
+/**
+ * Lisätty rekisteröitävän käyttäjän tietojen tarkistuksen kutsu userMode.chekcUser sekä vertailuoperaattorit
+ * Tällä varmistetaan ettei voi rekisteröidä samaa käyttäjätunnusta tai salasanaa
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 const user_create_post = async (req, res) => {
     const errors = validationResult(req);
 
@@ -41,7 +39,7 @@ const user_create_post = async (req, res) => {
         req.body.username,
         req.body.email
     ]
-    //TODO varmista, että palauttaa oikeaa dataa ja on vakaa
+
     const check = await userModel.checkUser(params)
 
     if(check===0){
@@ -67,24 +65,26 @@ const user_create_post = async (req, res) => {
         res.status(400).json({error: 'Something went wrong'})
     }
 };
-//TODO Login ja logout tietojen tallentaminen locaalisti tai sessioon ja tarkistus jwt.auth yms.
+
 const logout = (req, res) => {
     res.json({message: 'User logged out'});
 };
 
-//TODO varmistetaan kutsun oikeellisuus ja varsinkin palautusten oikeat arvot
+/**
+ * Lisätty React toteutukseen token autentikointi serverin kautta.
+ * Funktio tarkistaa tokenin voimassaolon ja palauttaa sitä vastaavan arvon
+ * @param req pyyntö palvelimelle joka sisältää tokenin
+ * @param res palauttaa käyttäjänimen, jos autentkointi on tosi
+ */
 const  authHeader = (req, res) => {
     const authHeader=req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1]
-    //console.log("Serverille vastaanotettu header: "+authHeader)
-    //console.log("Serverillä käsiteltävä token: "+token)
 
     jwt.verify(token, secrets.jwtSecret, (err, user) => {
         if(err){
             console.log(err)
             res.send("Error")
         } else {
-            //console.log("JWT decoded user (decoded)"+JSON.stringify(user.Name))
             res.status(200).send(JSON.stringify(user.Name))
         }
     })

@@ -13,43 +13,51 @@ import './App.css'
 import {Container, Nav, Navbar} from "react-bootstrap";
 import './components/Components.css'
 
-//TODO: category vaihtaa parametriksi filterin mukaan
-
 function App() {
 
+    /**
+     * Ajaa sisällä olevat funktiot, kun sivu avataan.
+     */
     useEffect(()=>{
         auth()
         handleCartCount()
     })
 
+    /**
+     * Määritellään napeille margin
+     * @type {{margin: number}}
+     */
     const navBarStyle = {
         margin: 2
     };
+
+    /**
+     * Reactin usetate muuttujia ja alkuarvoja
+     * Näillä mm. käsitellään kirjautumis yms modaleita sekä tekstein ja nappien näkyvyyttä
+     */
     const [show, setShow] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
-
-
     const [userName, setUserName]  = useState();
     const [userEmail, setUserEmail] = useState();
     const [userPw, setUserPw] = useState();
-
     const [showLogged, setShowLogged] = useState()
-
     const [showLogoutButton, setShowLogoutButton] = useState(true)
     const [showLogRegButton, setShowLogRegButton] = useState(false)
-
     const [showLoggedName, setShowLoggedName] = useState(true)
+    const [cartCount, setCartCount] = useState()
 
-    const [cartCount, setCartcount] = useState()
-
+    /**
+     * Alla olevilla metodeilla käsitellään erinäisten state-muuttujien arvon vaihdoksia
+     */
     const handleCartCount = () => {
-        setCartcount(JSON.parse(sessionStorage.getItem('cart')).length)
+        setCartCount(JSON.parse(sessionStorage.getItem('cart')).length)
     }
 
     const handleClose = () => {
         setShow(false);
         setShowRegister(false)
     }
+
     const handleShow = () => setShow(true);
     const handleShowRegister = () => setShowRegister(true);
 
@@ -64,6 +72,12 @@ function App() {
         setUserPw(event.target.value)
     }
 
+    /**
+     * Metodi hoitaa rekisteröintikutsun lähettämisen serverille
+     * Kerää kaiken olellisen datan state-muuttujista yhden muuttujan alle
+     * Kirjaa käyttäjän sisälle, jos rekisteröinti onnistuu
+     * @param event toimii suorana hakijana mahdollisetsi Bootsrtapin JXS
+     */
     const handleRegister = (event) => {
         handleClose()
         event.preventDefault()
@@ -72,12 +86,10 @@ function App() {
             email: userEmail,
             password: userPw
         }
-        //console.log(registerData)
 
         axios
             .post('http://localhost:8081/auth/register', registerData)
             .then(response=>{
-                //console.log(response)
                 if (response.status===200) {
                     const loginData={
                         username: userEmail,
@@ -86,7 +98,6 @@ function App() {
                     axios
                         .post('http://localhost:8081/auth/login', loginData)
                         .then(response=>{
-                            //console.log(response.data)
                             localStorage.setItem('token', JSON.stringify(response.data.token))
                             localStorage.setItem('user', JSON.stringify(response.data.user.Name))
                             localStorage.setItem('email', JSON.stringify(response.data.user.Email))
@@ -101,6 +112,11 @@ function App() {
 
     }
 
+    /**
+     * Metodilla kirjaudutaan sisälle
+     * Palautuksena tulee token, käyttäjätunnus ja email
+     * @param event
+     */
     const handleLogin = (event) => {
         handleClose()
         event.preventDefault()
@@ -108,7 +124,6 @@ function App() {
             username: userEmail,
             password: userPw
         }
-        //console.log(loginData)
 
         axios
             .post('http://localhost:8081/auth/login', loginData)
@@ -123,12 +138,15 @@ function App() {
             })
     }
 
+    /**
+     * Metodilla autentikoidaan tokenin voimassaolo
+     * Jos token on voimassa, näytetään käyttäjä kirjautuneena
+     */
     const auth = () => {
         const token = JSON.parse(localStorage.getItem('token'))
         //console.log(token)
         axios.get('http://localhost:8081/auth/auth', {headers: {Authorization:'Bearer: '+token}})
             .then(response => {
-                //console.log(response.data)
                 if(response.data==="Error"){
                     setShowLogged('')
                     setShowLoggedName(true)
@@ -143,12 +161,14 @@ function App() {
             })
     }
 
+    /**
+     * Metodilla tyhjennetään kaikki kirjautumistiedot ja ajetaan vielä auth(), jolla varmistetaan tokenin poistuneen
+     */
     const logout = () => {
         axios.get('http://localhost:8081/auth/logout').then(response=>{
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('email');
-            console.log(response)
             auth()
             setShowLogRegButton(false)
             setShowLogoutButton(true)
@@ -156,6 +176,12 @@ function App() {
         })
     }
 
+    /**
+     * App.js näkymän palautus
+     * Palautus on toteutettu käyttäen pääasiassa React Bootsrappia ja sen kautta on myös ulkoasu pitkälti
+     * Modaleilla hoidetaan kirjautuminen ja rekisteröinti.
+     * Modalit näkyvät useState toiminnolla tarpeen mukaan
+     */
     return (
         <div className="App">
             <div id="logo">
@@ -265,9 +291,15 @@ function App() {
     );
 }
 
+/**
+ * App.js näkymän päivitys funktio
+ */
 function refreshPage() {
     window.location.reload(false)
 }
 
+/**
+ * Luokasta ulospäin näkyvät metodit
+ */
 export default App;
 export {refreshPage}

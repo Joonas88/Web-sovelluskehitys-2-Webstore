@@ -38,9 +38,6 @@ const FilterView = (props) => {
      */
     return(
         <div className="wrapper">
-            <div>
-                <Slideshow component={Slideshow}/>
-            </div>
             <h1 className="otsikko">{props.match.params.id}</h1>
             <ul className="featured-items">
                 {products.map(product => (

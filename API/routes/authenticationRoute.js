@@ -16,7 +16,9 @@ router.post('/register',
     ],
     authController.user_create_post
 );
-
+/**
+ * React projektiin lisätty tokenin autentikointi
+ */
 router.get('/auth',[], authController.authHeader)
 
 module.exports = router;

@@ -2,20 +2,11 @@
 
 require('dotenv').config({ path: require('find-config')('.env') })
 
-/**
- * @constant
- */
-const mysql = require('mysql2');
-/*
-process.env.DB_HOST = 'mysql.metropolia.fi';
-process.env.DB_USER = 'paulivu';
-process.env.DB_PASS = 'sqlpw12345';
-process.env.DB_NAME = 'paulivu';
 
- */
+const mysql = require('mysql2');
+
 /**
- * sql yhteyden asetukset
- * @constant
+ * React projektiin lisätty tietokantayhteyden tiedot .env tiedostoon ja lisätty dotenv niitä lukemaan
  * @type {Pool}
  */
 const pool = mysql.createPool({
