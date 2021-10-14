@@ -7,7 +7,11 @@ const slideImages = [
     'assets/images/slideshow/rtx3080.jpg',
     'assets/images/slideshow/studio.jpg'
 ];
-
+/**
+ * Slideshow komponentti joka näkyy  sivuilla valikkopalkin alla
+ * @returns {*}
+ * @constructor
+ */
 const Slideshow = () => {
     return (
         <div>

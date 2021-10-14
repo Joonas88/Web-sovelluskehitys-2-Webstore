@@ -8,18 +8,23 @@ import {Button, Nav} from "react-bootstrap";
 import Slideshow from './Slideshow';
 
 const Home = (props) => {
-    const [products, setProducts] = useState([]);
 
+    const [products, setProducts] = useState([]);
+    /**
+     * Hakee tuotteet tietokannasta taulukkoon
+     */
     useEffect( () => {
         axios.get('http://localhost:8081/products').then(response => {
-            console.log(response.data);
+            //console.log(response.data);
             setProducts(response.data);
         })
 
     }, [])
 
+    /**
+     * Listaa etusivulle tuotteet joiden featured = 1
+     */
     return(
-
         <div className="wrapper">
             <div>
                 <Slideshow component={Slideshow}/>

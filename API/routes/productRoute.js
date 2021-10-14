@@ -18,7 +18,7 @@ const router = express.Router();
 const productController = require('../controller/productController');
 
 /**
- * Asetetaan Vue:n routerin osoitteet
+ * Asetetaan tietokanta kyselyn osoitteet
  */
 router.get('/components/:category_name', productController.getProductsByCategory);
 

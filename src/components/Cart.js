@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {removeFromCart} from '../store';
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
@@ -7,44 +7,51 @@ import Form from "react-bootstrap/Form";
 import {Col, Container, Row} from "react-bootstrap";
 import {refreshPage} from "../App";
 import Slideshow from './Slideshow';
-//TODO Kommentoi koodi
 
 const Cart = () => {
     let cartItems = JSON.parse(sessionStorage.getItem('cart'));
-    const [value, setValue] = useState();
+    const [setValue] = useState();
     const [shippingOption, setShippingOption] = useState([20]);
 
+    /**
+     * Ostoskorin hintatiedot yms.
+     */
     const cartItemsCount = cartItems.length;
     const itemSubtotal = cartItems.reduce((itemSubtotal, item) => itemSubtotal = itemSubtotal + item.Price, 0);
     const subtotal = cartItems.reduce((itemSubtotal, item) => itemSubtotal = itemSubtotal + item.Price, 0) + Number(shippingOption);
     const salesTax = 0.14;
     const salesTaxApplied = subtotal * salesTax;
     const total = subtotal + salesTaxApplied;
-    const selectedShippingOption = '';
 
-    const [showError, setShowError] = useState(false)
-    const [showContact, setShowContact] = useState(false)
-    const [orderName, setOrderName] = useState()
-    const [orderAddress, setOrderAddress] = useState()
-    const [orderZip, setOrderZip] = useState()
-    const [orderCity, setOrderCity] = useState()
-    const [orderPhone, setOrderPhone] = useState()
-    const [orderEmail, setOrderEmail] = useState()
+    /**
+     * Tilauslomakkeen tietojen käsittely
+     */
+    const [showError, setShowError] = useState(false);
+    const [showContact, setShowContact] = useState(false);
+    const [orderName, setOrderName] = useState();
+    const [orderAddress, setOrderAddress] = useState();
+    const [orderZip, setOrderZip] = useState();
+    const [orderCity, setOrderCity] = useState();
+    const [orderPhone, setOrderPhone] = useState();
+    const [orderEmail, setOrderEmail] = useState();
 
-    //Päivittää ostoskorin
+    /**
+     * Päivittää ostoskorin
+     */
     const refresh = ()=>{
         setValue({});
     }
-    //Käsittelee postitusvaihtoehdon muutoksen
+    
+    /**
+     * Käsittelee postitusvaihtoehdon muutoksen
+     */
     const handleShippingSelect = (event) => {
         setShippingOption(event.target.value);
     }
 
-    /*
-    console.log("sessionStorage: ")
-    console.log(JSON.parse(sessionStorage.getItem('cart')))
+    /**
+     * Tarkistaa onko käyttäjä kirjautunut / onko token voimassa tilausta tehdessä
      */
-
     const auth = () => {
         const token = JSON.parse(localStorage.getItem('token'))
         //console.log(token)
@@ -59,15 +66,25 @@ const Cart = () => {
             })
     }
 
+    /**
+     * Päivittää sivun
+     */
     const handleRefresh = () => {
         setShowError(false)
         refreshPage()
     }
 
+    /**
+     * Sulkee tilaus modalin
+     */
     const handleClose = () => {
         setShowContact(false)
     }
 
+    /**
+     * Handlet päivittävät muuttujat tilaus tietoja syöttäessä
+     * @param event
+     */
     const handleOrderName = (event) => {
         setOrderName(event.target.value)
     }
@@ -92,6 +109,10 @@ const Cart = () => {
         setOrderEmail(event.target.value)
     }
 
+    /**
+     * Tilauksen tallentaminen tietokantaan syötetyillä tiedoilla ja ostoskorin tuotteilla
+     * @param event
+     */
     const sendOrder = (event) => {
 
         event.preventDefault()
@@ -101,9 +122,8 @@ const Cart = () => {
             //console.log(cartItems[i].Product_id)
             orders.push(cartItems[i].Product_id)
         }
-
-        console.log(orders)
-        console.log(JSON.stringify(orders))
+        //console.log(orders)
+        //console.log(JSON.stringify(orders))
        const order = {
            name: orderName,
            address: orderAddress,
@@ -130,9 +150,11 @@ const Cart = () => {
                     alert("Somethin went wrong!")
                 }
             })
-
     }
-
+    /**
+     * Ostoskori näkymä:
+     * ostoskorin sisältö, hinta ja toimitustiedot sekä tilaus modali
+     */
     return(
         <div className="wrapper">
             <div>
@@ -300,7 +322,6 @@ const Cart = () => {
                 </Modal.Footer>
             </Modal>
             </div>
-
     )
 }
 

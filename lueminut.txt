@@ -1,0 +1,98 @@
+
+Rest-API palauttaa ja muokkaa tietoa tietokannasta localilla tietokanta serverillä. 
+
+Tietokanta koostuu neljästä taulusta, joita ovat products, orders, category sekä users. Products-taulu sisältää tietokoneen osia,
+joita verkkokauppamme on myyvinään. Orders-taulu sisältää tehdyt tilaukset. Category-taulu koostuu viidestä kategoriasta, jotka 
+luokittelevat myytävät tietokoneen osat. Users-taulu sisältää käyttäjätilit, jotka on luotu, ja joihin voi kirjautua takaisin sisään.Taulun
+salasanat on salattu(hash) bcryptillä.
+
+
+Rajapinnan erilaisia kutsuja ovat:
+
+1. Product-route '/'
+
+
+GET '/products'
+Palauttaa kaikki tietokannasta löytyvät tuotteet json-muodossa. Yksittäisen tuotteen tiedot tulevat muodossa:
+
+		[
+			{
+			"Name":"NVIDIA GeForce RTX 3090 ROG Strix",
+			"Price":1499.99,
+			"Product_id":5,
+			"Image":"RTX3080-ROG.jpg",
+			"Stock":1,
+			"Memory":"24 Gb GDDR6X",
+			"Socket":null,
+			"Frequency":"Boost: 1800 MHz",
+			"Cores":null,
+			"Featured":1,
+			"Category_id":1
+			}
+		]
+	
+
+GET '/components/:category_name' :category_name voi olla esim. "RAM", "Motherboard", "GPU" tai "CPU"
+Palauttaa kaikki tietokannasta löytyvät tuotteet kategorian mukaan. 
+
+GET '/products/:id'
+Palauttaa tuotteen, jonka Product_id on sama, kuin annetulla parametrillä :id. 
+
+GET '/featured'
+Palauttaa tuotteet, joiden Featured = 1. Näitä tuotteita esitellään kaupan etusivulla.
+
+
+2. Authentication-route '/auth/
+
+POST '/auth/register'
+Luo kutsujalle käyttäjätunnuksen tietokantaan. Parametrejä ovat requestin bodyn username, email sekä password, jotka validoidaan 
+express-validatorin avulla. Salasana hashataan bcryptillä ennen tietokantaan tallentamista. Käyttäjän luominen:
+
+	{"username":"testi3@testi.com","email":"testi3@testi.com","password":"Testi123"}
+
+Vastaukseksi tulee joko succes tai error riippuen onnistumisesta.
+
+POST'/auth/login'
+Kutsun avulla käyttäjä voi kirjautua ennestään olemassa olevalla käyttäjätunnukselle. Parametrejä ovat request body email sekä password. Kirjautumis tiedot tulevat muodossa:
+
+	{
+    		"user": {
+        		"user_id": 2,
+        		"Name": "testi1",
+        		"Email": "testi1@testi.com",
+        		"Password": "$2a$10$KhwVgJ1IqI0Rs7MGdcvh/.s4JXoOONmQIzbdSTIecx0Q1gEjYLKtO"
+    		},
+		"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJOYW1lIjoidGVzdGkxIiwiRW1haWwiOiJ0ZXN0aTFAdGVzdGkuY29tIiwiUGFzc3dvcmQiOiIkMmEkMTAkS2h3VmdKMUlxSTBSczdNR2RjdmgvLnM0SlhvT09ObVFJemJkU1RJZWN4MFExZ0VqWUxLdE8iLCJpYXQiOjE2MzQyMjkzMzIsImV4cCI6MTYzNDMxNTczMn0.2XYPh1mrJSiNcT7wkgWDZN3wb4bCkMgykHW-r4vTqBE"
+	}
+
+GET '/auth/logout'
+Kutsun avulla käyttäjä voi kirjautua ulos.
+
+GET '/auth/auth'
+Kutsu tarkistaa onko token voimassa.
+
+
+3. User-route '/user'
+
+GET '/user/:id'
+Routen ainoa kutsu, jonka avulla voidaan käyttäjän user_id:n perusteella etsiä käyttäjiä. Kutsua käytetään lähinnä vain 
+Authentication-routen kutsuja ajatellen.
+
+
+4. Order-route '/order'
+
+POST'/order/submit'
+Käyttäjän tekemä tilaus tallennettaan tietoineen tietokantaan. Parametrejä ovat request mm. bodyn name, email sekä address.
+Jos käyttäjä on kirjautunut sisään, saadaan käyttäjän nimi sekä sähköpostiosoite Vuex:n statesta, 
+jolloin käyttäjän ei tarvitse kirjoittaa niitä. Tilauksen lisääminen:
+
+{
+address: "Kotiosoite"
+city: "Vantaa"
+email: "joonas@joonas.fi"
+name: "Joonas"
+order: "[1,32,33,8,16,20]"
+phone: "0400000000"
+price: 3488.3315999999995
+zip: "01300"
+}

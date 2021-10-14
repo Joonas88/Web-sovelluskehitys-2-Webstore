@@ -6,9 +6,12 @@ import Button from "react-bootstrap/Button";
 import Slideshow from './Slideshow';
 
 const Product = (props) => {
-    //console.log(props.match.params.id)
-    const [products, setProducts] = useState([]);
 
+    const [products, setProducts] = useState([]);
+    
+    /**
+     * Hakee tietokannasta tuotesivulle tuotteen id:n perusteella
+     */
     useEffect( () => {
         axios.get(`http://localhost:8081/products/${props.match.params.id}`).then(response => {
             console.log(response.data);
@@ -16,15 +19,20 @@ const Product = (props) => {
         })
     }, [])
 
+    /**
+     * käsittelee ostoskoriin lisäämisen tuotteen id:llä
+     * @param event
+     * @param props.match.params.id tuotteen id osoittesta
+     */
     const handleAddToCart = (event) => {
         addToCart(props.match.params.id);
     }
 
+    /**
+     * Listaa tuotteen tiedot tuotesivulle
+     */
     return(
         <div className="wrapper">
-            <div>
-                <Slideshow component={Slideshow}/>
-            </div>
             <h1 className="otsikko">Product info</h1>
             <ul className="list">
                 {products.map(product => (
